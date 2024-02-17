@@ -1,6 +1,6 @@
-import 'package:best_flutter_ui_templates/monitoring_app/monitoring_app_theme.dart';
-import 'package:best_flutter_ui_templates/monitoring_app/models/sensor_list_data.dart';
-import 'package:best_flutter_ui_templates/main.dart';
+import 'package:monitoring_app/monitoring_app/monitoring_app_theme.dart';
+import 'package:monitoring_app/monitoring_app/models/sensor_list_data.dart';
+import 'package:monitoring_app/main.dart';
 import 'package:flutter/material.dart';
 
 //import '../../main.dart';
@@ -8,8 +8,7 @@ import 'package:flutter/material.dart';
 
 class SensorsListView extends StatefulWidget {
   const SensorsListView(
-      {Key? key, this.mainScreenAnimationController, this.mainScreenAnimation})
-      : super(key: key);
+      {super.key, this.mainScreenAnimationController, this.mainScreenAnimation});
 
   final AnimationController? mainScreenAnimationController;
   final Animation<double>? mainScreenAnimation;
@@ -51,7 +50,7 @@ class _SensorsListViewState extends State<SensorsListView>
           child: Transform(
             transform: Matrix4.translationValues(
                 0.0, 30 * (1.0 - widget.mainScreenAnimation!.value), 0.0),
-            child: Container(
+            child: SizedBox(
               height: 216,
               width: double.infinity,
               child: ListView.builder(
@@ -87,8 +86,7 @@ class _SensorsListViewState extends State<SensorsListView>
 
 class SensorsView extends StatelessWidget {
   const SensorsView(
-      {Key? key, this.sensorsListData, this.animationController, this.animation})
-      : super(key: key);
+      {super.key, this.sensorsListData, this.animationController, this.animation});
 
   final SensorsListData? sensorsListData;
   final AnimationController? animationController;
@@ -145,7 +143,7 @@ class SensorsView extends StatelessWidget {
                             Text(
                               sensorsListData!.titleTxt,
                               textAlign: TextAlign.center,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontFamily: MonitoringAppTheme.fontName,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 12,
@@ -163,7 +161,7 @@ class SensorsView extends StatelessWidget {
                                   children: <Widget>[
                                     Text(
                                       sensorsListData!.sensors!.join('\n'),
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontFamily: MonitoringAppTheme.fontName,
                                         fontWeight: FontWeight.w500,
                                         fontSize: 8,
@@ -183,7 +181,7 @@ class SensorsView extends StatelessWidget {
                                       Text(
                                         sensorsListData!.status.toString(),
                                         textAlign: TextAlign.center,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontFamily: MonitoringAppTheme.fontName,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 10,
@@ -191,8 +189,8 @@ class SensorsView extends StatelessWidget {
                                           color: MonitoringAppTheme.white,
                                         ),
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
+                                      const Padding(
+                                        padding: EdgeInsets.only(
                                             left: 4, bottom: 3),
                                         child: Text(
                                           '',
@@ -216,7 +214,7 @@ class SensorsView extends StatelessWidget {
                                         BoxShadow(
                                             color: MonitoringAppTheme.nearlyBlack
                                                 .withOpacity(0.4),
-                                            offset: Offset(8.0, 8.0),
+                                            offset: const Offset(8.0, 8.0),
                                             blurRadius: 8.0),
                                       ],
                                     ),

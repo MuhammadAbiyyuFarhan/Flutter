@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:best_flutter_ui_templates/monitoring_app/monitoring_app_theme.dart';
+import 'package:monitoring_app/monitoring_app/monitoring_app_theme.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_database/firebase_database.dart';
 
@@ -12,10 +12,10 @@ class ProductStatusView extends StatefulWidget {
   final Animation<double>? animation;
 
   const ProductStatusView({
-    Key? key,
+    super.key,
     this.animationController,
     this.animation,
-  }) : super(key: key);
+  });
 
   @override
   _ProductStatusViewState createState() => _ProductStatusViewState();
@@ -55,8 +55,8 @@ class _ProductStatusViewState extends State<ProductStatusView> {
       builder: (BuildContext context, Widget? child) {
         return FadeTransition(
           opacity: widget.animation!,
-          child: new Transform(
-            transform: new Matrix4.translationValues(
+          child: Transform(
+            transform: Matrix4.translationValues(
               0.0,
               30 * (1.0 - widget.animation!.value),
               0.0,
@@ -71,7 +71,7 @@ class _ProductStatusViewState extends State<ProductStatusView> {
               child: Container(
                 decoration: BoxDecoration(
                   color: MonitoringAppTheme.white,
-                  borderRadius: BorderRadius.only(
+                  borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(8.0),
                     bottomLeft: Radius.circular(8.0),
                     bottomRight: Radius.circular(8.0),
@@ -80,7 +80,7 @@ class _ProductStatusViewState extends State<ProductStatusView> {
                   boxShadow: <BoxShadow>[
                     BoxShadow(
                       color: MonitoringAppTheme.grey.withOpacity(0.2),
-                      offset: Offset(1.1, 1.1),
+                      offset: const Offset(1.1, 1.1),
                       blurRadius: 10.0,
                     ),
                   ],
@@ -97,8 +97,8 @@ class _ProductStatusViewState extends State<ProductStatusView> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(
+                          const Padding(
+                            padding: EdgeInsets.only(
                               left: 4,
                               bottom: 8,
                               top: 16,
@@ -131,7 +131,7 @@ class _ProductStatusViewState extends State<ProductStatusView> {
                                     child: Text(
                                       detectionCounter,
                                       textAlign: TextAlign.center,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontFamily: MonitoringAppTheme.fontName,
                                         fontWeight: FontWeight.w600,
                                         fontSize: 32,
@@ -139,8 +139,8 @@ class _ProductStatusViewState extends State<ProductStatusView> {
                                       ),
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
+                                  const Padding(
+                                    padding: EdgeInsets.only(
                                       left: 8,
                                       bottom: 8,
                                     ),
@@ -191,8 +191,8 @@ class _ProductStatusViewState extends State<ProductStatusView> {
                                       ),
                                     ],
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
+                                  const Padding(
+                                    padding: EdgeInsets.only(
                                       top: 4,
                                       bottom: 14,
                                     ),
@@ -225,7 +225,7 @@ class _ProductStatusViewState extends State<ProductStatusView> {
                       ),
                       child: Container(
                         height: 2,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: MonitoringAppTheme.background,
                           borderRadius: BorderRadius.all(
                             Radius.circular(4.0),
@@ -247,7 +247,7 @@ class _ProductStatusViewState extends State<ProductStatusView> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Text(
+                                const Text(
                                   '35 pcs',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
@@ -284,7 +284,7 @@ class _ProductStatusViewState extends State<ProductStatusView> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: <Widget>[
-                                    Text(
+                                    const Text(
                                       '32 pcs',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
@@ -324,7 +324,7 @@ class _ProductStatusViewState extends State<ProductStatusView> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: <Widget>[
-                                    Text(
+                                    const Text(
                                       '3%',
                                       style: TextStyle(
                                         fontFamily: MonitoringAppTheme.fontName,

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class SensorDetailScreen extends StatefulWidget {
+  const SensorDetailScreen({super.key});
+
   @override
   _SensorDetailScreenState createState() => _SensorDetailScreenState();
     String getDetectionCounter() {
@@ -43,9 +45,9 @@ class _SensorDetailScreenState extends State<SensorDetailScreen> {
 Widget build(BuildContext context) {
   return Scaffold(
     appBar: AppBar(
-      title: Text('Sensor Detail'),
+      title: const Text('Sensor Detail'),
       leading: IconButton(
-        icon: Icon(Icons.arrow_back),
+        icon: const Icon(Icons.arrow_back),
         onPressed: () {
           // Panggil Navigator.pop untuk kembali ke halaman sebelumnya
           Navigator.pop(context);
@@ -58,12 +60,12 @@ Widget build(BuildContext context) {
         children: [
           Text(
             'Detection Counter: $detectionCounter',
-            style: TextStyle(fontSize: 18),
+            style: const TextStyle(fontSize: 18),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text(
             'Sensor Value: $sensorValue',
-            style: TextStyle(fontSize: 18),
+            style: const TextStyle(fontSize: 18),
           ),
         ],
       ),

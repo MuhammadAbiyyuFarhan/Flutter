@@ -1,5 +1,5 @@
-import 'package:best_flutter_ui_templates/monitoring_app/models/tabIcon_data.dart';
-import 'package:best_flutter_ui_templates/monitoring_app/info/sensor_info_screen.dart';
+import 'package:monitoring_app/monitoring_app/models/tabIcon_data.dart';
+import 'package:monitoring_app/monitoring_app/info/sensor_info_screen.dart';
 import 'package:flutter/material.dart';
 import 'bottom_navigation_view/bottom_bar_view.dart';
 import 'monitoring_app_theme.dart';
@@ -7,6 +7,8 @@ import 'my_screen/my_screen.dart';
 import 'my_screen/history.dart';
 
 class MonitoringAppHomeScreen extends StatefulWidget {
+  const MonitoringAppHomeScreen({super.key});
+
   @override
   _MonitoringAppHomeScreenState createState() => _MonitoringAppHomeScreenState();
 }
@@ -23,9 +25,9 @@ class _MonitoringAppHomeScreenState extends State<MonitoringAppHomeScreen>
 
   @override
   void initState() {
-    tabIconsList.forEach((TabIconData tab) {
+    for (var tab in tabIconsList) {
       tab.isSelected = false;
-    });
+    }
     tabIconsList[0].isSelected = true;
 
     animationController = AnimationController(
@@ -107,7 +109,7 @@ class _MonitoringAppHomeScreenState extends State<MonitoringAppHomeScreen>
                 }
                 setState(() {
                   tabBody =
-                      HistoryScreen();
+                      const HistoryScreen();
                 });
               });
             }

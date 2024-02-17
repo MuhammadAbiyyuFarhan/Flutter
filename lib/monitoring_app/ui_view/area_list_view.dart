@@ -1,12 +1,14 @@
-import 'package:best_flutter_ui_templates/monitoring_app/my_screen/sensors_detail.dart';
+import 'package:monitoring_app/monitoring_app/list_view/conveyor.dart';
+import 'package:monitoring_app/monitoring_app/list_view/proximity.dart';
+import 'package:monitoring_app/monitoring_app/list_view/tachometer.dart';
+import 'package:monitoring_app/monitoring_app/list_view/tcs3200.dart';
+import 'package:monitoring_app/monitoring_app/my_screen/sensors_detail.dart';
 import 'package:flutter/material.dart';
-
 import '../monitoring_app_theme.dart';
 
 class AreaListView extends StatefulWidget {
   const AreaListView(
-      {Key? key, this.mainScreenAnimationController, this.mainScreenAnimation})
-      : super(key: key);
+      {super.key, this.mainScreenAnimationController, this.mainScreenAnimation, required Null Function() onTap, required Null Function() onProximityTap, required Null Function() onConveyorTap, required Null Function() onTCS3200Tap, required Null Function() onTachometerTap});
 
   final AnimationController? mainScreenAnimationController;
   final Animation<double>? mainScreenAnimation;
@@ -56,6 +58,12 @@ class _AreaListViewState extends State<AreaListView>
                       left: 10, right: 10, top: 10, bottom: 10),
                   physics: const BouncingScrollPhysics(),
                   scrollDirection: Axis.vertical,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 20.0,
+                    crossAxisSpacing: 20.0,
+                    childAspectRatio: 1.2,
+                  ),
                   children: List<Widget>.generate(
                     areaListData.length,
                     (int index) {
@@ -76,12 +84,6 @@ class _AreaListViewState extends State<AreaListView>
                       );
                     },
                   ),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 20.0,
-                    crossAxisSpacing: 20.0,
-                    childAspectRatio: 1.2,
-                  ),
                 ),
               ),
             ),
@@ -94,11 +96,11 @@ class _AreaListViewState extends State<AreaListView>
 
 class AreaView extends StatelessWidget {
   const AreaView({
-    Key? key,
+    super.key,
     this.imagepath,
     this.animationController,
     this.animation,
-  }) : super(key: key);
+  });
 
   final String? imagepath;
   final AnimationController? animationController;
@@ -137,13 +139,40 @@ class AreaView extends StatelessWidget {
                   hoverColor: Colors.transparent,
                   borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                   splashColor: MonitoringAppTheme.nearlyDarkBlue.withOpacity(0.2),
-                  onTap: () {
-                  // Navigasi ke layar sensor_detail.dart
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SensorDetailScreen()),
-                  );
-                },
+                 // Inside the onTap callback of InkWell in AreaView widget
+
+onTap: () {
+  // Determine which screen to navigate based on the imagepath
+  switch (imagepath) {
+    case 'assets/monitoring_app/proximity.png':
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ProximityDetailScreen()),
+      );
+      break;
+    case 'assets/monitoring_app/conveyor.png':
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ConveyorDetailScreen()),
+      );
+      break;
+    case 'assets/monitoring_app/tachometer.png':
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const TachometerDetailScreen()),
+      );
+      break;
+    case 'assets/monitoring_app/TCS3200.png':
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const TCS3200DetailScreen()),
+      );
+      break;
+    default:
+      // Handle default case if necessary
+      break;
+      }
+    },
                   child: Column(
                     children: <Widget>[
                       Padding(

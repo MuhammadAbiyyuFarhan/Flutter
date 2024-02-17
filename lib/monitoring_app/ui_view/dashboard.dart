@@ -1,33 +1,74 @@
-import 'package:best_flutter_ui_templates/monitoring_app/monitoring_app_theme.dart';
-import 'package:best_flutter_ui_templates/main.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:monitoring_app/monitoring_app/monitoring_app_theme.dart';
+import 'package:monitoring_app/main.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-class DashboardView extends StatelessWidget {
+class DashboardView extends StatefulWidget {
   final AnimationController? animationController;
   final Animation<double>? animation;
 
-  const DashboardView(
-      {Key? key, this.animationController, this.animation})
-      : super(key: key);
+  const DashboardView({super.key, this.animationController, this.animation});
+
+  @override
+  _DashboardView createState() => _DashboardView();
+}
+
+class _DashboardView extends State<DashboardView> {
+  late DatabaseReference _databaseReference;
+  String beltSpeed1 = 'Loading...'; // Initial value
+  String RPM1 = 'Loading...';
+  String RPM2 = 'Loading...';
+  String RPMAVG = 'Loading...';
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the database reference
+    _databaseReference = FirebaseDatabase.instance.reference();
+
+    // Register a listener to listen for changes in the database
+    _databaseReference.onValue.listen((DatabaseEvent event) {
+      if (event.snapshot.value != null) {
+        setState(() {
+          // Use null-aware operators to safely access the values
+          beltSpeed1 =(event.snapshot.value as Map<String, dynamic>?)?['beltSpeed1']?.toString() ??'Error';
+          RPM1 =(event.snapshot.value as Map<String, dynamic>?)?['RPM1']?.toString() ??'Error';
+          RPM2 =(event.snapshot.value as Map<String, dynamic>?)?['RPM2']?.toString() ??'Error';
+          RPMAVG =(event.snapshot.value as Map<String, dynamic>?)?['RPMAVG']?.toString() ??'Error';
+        });
+      } else {
+        // Handle the case when sensor values cannot be obtained
+        setState(() {
+          beltSpeed1 = 'Error';
+          RPM1 = 'Error';
+          RPM2 = 'Error';
+          RPMAVG = 'Error';
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: animationController!,
+      animation: widget.animationController!,
       builder: (BuildContext context, Widget? child) {
+        int rpm1Value = int.tryParse(RPM1) ?? 0;
+        int rpm2Value = int.tryParse(RPM2) ?? 0;
+        int rpmavgValue = int.tryParse(RPMAVG) ?? 0;
         return FadeTransition(
-          opacity: animation!,
-          child: new Transform(
-            transform: new Matrix4.translationValues(
-                0.0, 30 * (1.0 - animation!.value), 0.0),
+          opacity: widget.animation!,
+          child: Transform(
+            transform: Matrix4.translationValues(
+                0.0, 30 * (1.0 - widget.animation!.value), 0.0),
             child: Padding(
               padding: const EdgeInsets.only(
                   left: 24, right: 24, top: 16, bottom: 18),
               child: Container(
                 decoration: BoxDecoration(
                   color: MonitoringAppTheme.white,
-                  borderRadius: BorderRadius.only(
+                  borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(8.0),
                       bottomLeft: Radius.circular(8.0),
                       bottomRight: Radius.circular(8.0),
@@ -35,7 +76,7 @@ class DashboardView extends StatelessWidget {
                   boxShadow: <BoxShadow>[
                     BoxShadow(
                         color: MonitoringAppTheme.grey.withOpacity(0.2),
-                        offset: Offset(1.1, 1.1),
+                        offset: const Offset(1.1, 1.1),
                         blurRadius: 10.0),
                   ],
                 ),
@@ -58,9 +99,9 @@ class DashboardView extends StatelessWidget {
                                         height: 48,
                                         width: 2,
                                         decoration: BoxDecoration(
-                                          color: HexColor('#87A0E5')
+                                          color: HexColor('#C5E898')
                                               .withOpacity(0.5),
-                                          borderRadius: BorderRadius.all(
+                                          borderRadius: const BorderRadius.all(
                                               Radius.circular(4.0)),
                                         ),
                                       ),
@@ -79,8 +120,8 @@ class DashboardView extends StatelessWidget {
                                                 'Conveyor 1',
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
-                                                  fontFamily:
-                                                      MonitoringAppTheme.fontName,
+                                                  fontFamily: MonitoringAppTheme
+                                                      .fontName,
                                                   fontWeight: FontWeight.w500,
                                                   fontSize: 16,
                                                   letterSpacing: -0.1,
@@ -99,16 +140,16 @@ class DashboardView extends StatelessWidget {
                                                   width: 28,
                                                   height: 28,
                                                   child: Image.asset(
-                                                      "assets/monitoring_app/eaten.png"),
+                                                      "assets/monitoring_app/speed.png"),
                                                 ),
                                                 Padding(
                                                   padding:
                                                       const EdgeInsets.only(
                                                           left: 4, bottom: 3),
                                                   child: Text(
-                                                    '${(35 * animation!.value).toInt()}',
+                                                    beltSpeed1,
                                                     textAlign: TextAlign.center,
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                       fontFamily:
                                                           MonitoringAppTheme
                                                               .fontName,
@@ -125,7 +166,7 @@ class DashboardView extends StatelessWidget {
                                                       const EdgeInsets.only(
                                                           left: 4, bottom: 3),
                                                   child: Text(
-                                                    'rpm',
+                                                    'm/s',
                                                     textAlign: TextAlign.center,
                                                     style: TextStyle(
                                                       fontFamily:
@@ -148,7 +189,7 @@ class DashboardView extends StatelessWidget {
                                       )
                                     ],
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 8,
                                   ),
                                   Row(
@@ -157,9 +198,9 @@ class DashboardView extends StatelessWidget {
                                         height: 48,
                                         width: 2,
                                         decoration: BoxDecoration(
-                                          color: HexColor('#F56E98')
+                                          color: HexColor('#9ADE7B')
                                               .withOpacity(0.5),
-                                          borderRadius: BorderRadius.all(
+                                          borderRadius: const BorderRadius.all(
                                               Radius.circular(4.0)),
                                         ),
                                       ),
@@ -178,8 +219,8 @@ class DashboardView extends StatelessWidget {
                                                 'Conveyor 2',
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
-                                                  fontFamily:
-                                                      MonitoringAppTheme.fontName,
+                                                  fontFamily: MonitoringAppTheme
+                                                      .fontName,
                                                   fontWeight: FontWeight.w500,
                                                   fontSize: 16,
                                                   letterSpacing: -0.1,
@@ -198,16 +239,16 @@ class DashboardView extends StatelessWidget {
                                                   width: 28,
                                                   height: 28,
                                                   child: Image.asset(
-                                                      "assets/monitoring_app/burned.png"),
+                                                      "assets/monitoring_app/speed1.png"),
                                                 ),
                                                 Padding(
                                                   padding:
                                                       const EdgeInsets.only(
                                                           left: 4, bottom: 3),
                                                   child: Text(
-                                                    '${(36 * animation!.value).toInt()}',
+                                                    beltSpeed1,
                                                     textAlign: TextAlign.center,
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                       fontFamily:
                                                           MonitoringAppTheme
                                                               .fontName,
@@ -224,7 +265,7 @@ class DashboardView extends StatelessWidget {
                                                       const EdgeInsets.only(
                                                           left: 8, bottom: 3),
                                                   child: Text(
-                                                    'rpm',
+                                                    'm/s',
                                                     textAlign: TextAlign.center,
                                                     style: TextStyle(
                                                       fontFamily:
@@ -264,10 +305,10 @@ class DashboardView extends StatelessWidget {
                                       height: 100,
                                       decoration: BoxDecoration(
                                         color: MonitoringAppTheme.white,
-                                        borderRadius: BorderRadius.all(
+                                        borderRadius: const BorderRadius.all(
                                           Radius.circular(100.0),
                                         ),
-                                        border: new Border.all(
+                                        border: Border.all(
                                             width: 4,
                                             color: MonitoringAppTheme
                                                 .nearlyDarkBlue
@@ -280,9 +321,9 @@ class DashboardView extends StatelessWidget {
                                             CrossAxisAlignment.center,
                                         children: <Widget>[
                                           Text(
-                                            '${(35 * animation!.value).toInt()}',
+                                            '${(35 * widget.animation!.value).toInt()}',
                                             textAlign: TextAlign.center,
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontFamily:
                                                   MonitoringAppTheme.fontName,
                                               fontWeight: FontWeight.normal,
@@ -315,13 +356,11 @@ class DashboardView extends StatelessWidget {
                                       painter: CurvePainter(
                                           colors: [
                                             MonitoringAppTheme.nearlyDarkBlue,
-                                            HexColor("#8A98E8"),
-                                            HexColor("#8A98E8")
+                                            HexColor("#FFFC9B"),
+                                            HexColor("#FFFC9B")
                                           ],
-                                          angle: 140 +
-                                              (360 - 140) *
-                                                  (1.0 - animation!.value)),
-                                      child: SizedBox(
+                                          angle: 140 + (360 - 140) * (1.0 - widget.animation!.value)),
+                                      child: const SizedBox(
                                         width: 108,
                                         height: 108,
                                       ),
@@ -339,7 +378,7 @@ class DashboardView extends StatelessWidget {
                           left: 24, right: 24, top: 8, bottom: 8),
                       child: Container(
                         height: 2,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: MonitoringAppTheme.background,
                           borderRadius: BorderRadius.all(Radius.circular(4.0)),
                         ),
@@ -355,8 +394,8 @@ class DashboardView extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Text(
-                                  'Info',
+                                const Text(
+                                  'rpm1',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontFamily: MonitoringAppTheme.fontName,
@@ -373,23 +412,25 @@ class DashboardView extends StatelessWidget {
                                     width: 70,
                                     decoration: BoxDecoration(
                                       color:
-                                          HexColor('#87A0E5').withOpacity(0.2),
-                                      borderRadius: BorderRadius.all(
+                                          HexColor('#AAC8A7').withOpacity(0.2),
+                                      borderRadius: const BorderRadius.all(
                                           Radius.circular(4.0)),
                                     ),
                                     child: Row(
                                       children: <Widget>[
                                         Container(
-                                          width: ((70 / 1.2) * animation!.value),
+                                          width: ((rpm1Value/20/1.2) *
+                                              widget.animation!.value),
                                           height: 4,
                                           decoration: BoxDecoration(
                                             gradient: LinearGradient(colors: [
-                                              HexColor('#87A0E5'),
-                                              HexColor('#87A0E5')
+                                              HexColor('#74E291'),
+                                              HexColor('#F6FFDE')
                                                   .withOpacity(0.5),
                                             ]),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(4.0)),
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                                    Radius.circular(4.0)),
                                           ),
                                         )
                                       ],
@@ -399,14 +440,14 @@ class DashboardView extends StatelessWidget {
                                 Padding(
                                   padding: const EdgeInsets.only(top: 6),
                                   child: Text(
-                                    '12',
+                                    RPM1,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontFamily: MonitoringAppTheme.fontName,
                                       fontWeight: FontWeight.w600,
                                       fontSize: 12,
-                                      color:
-                                          MonitoringAppTheme.grey.withOpacity(0.5),
+                                      color: MonitoringAppTheme.grey
+                                          .withOpacity(0.5),
                                     ),
                                   ),
                                 ),
@@ -422,8 +463,8 @@ class DashboardView extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    Text(
-                                      'Info',
+                                    const Text(
+                                      'rpm2',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontFamily: MonitoringAppTheme.fontName,
@@ -439,26 +480,28 @@ class DashboardView extends StatelessWidget {
                                         height: 4,
                                         width: 70,
                                         decoration: BoxDecoration(
-                                          color: HexColor('#F56E98')
+                                          color: HexColor('#AAC8A7')
                                               .withOpacity(0.2),
-                                          borderRadius: BorderRadius.all(
+                                          borderRadius: const BorderRadius.all(
                                               Radius.circular(4.0)),
                                         ),
                                         child: Row(
                                           children: <Widget>[
                                             Container(
-                                              width: ((70 / 2) *
-                                                  animationController!.value),
+                                              width: ((rpm2Value /100/ 1.2) *
+                                                  widget.animationController!
+                                                      .value),
                                               height: 4,
                                               decoration: BoxDecoration(
                                                 gradient:
                                                     LinearGradient(colors: [
-                                                  HexColor('#F56E98')
+                                                  HexColor('#AAC8A7')
                                                       .withOpacity(0.1),
-                                                  HexColor('#F56E98'),
+                                                  HexColor('#F6FFDE'),
                                                 ]),
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(4.0)),
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                        Radius.circular(4.0)),
                                               ),
                                             ),
                                           ],
@@ -468,10 +511,11 @@ class DashboardView extends StatelessWidget {
                                     Padding(
                                       padding: const EdgeInsets.only(top: 6),
                                       child: Text(
-                                        '30',
+                                        RPM2,
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          fontFamily: MonitoringAppTheme.fontName,
+                                          fontFamily:
+                                              MonitoringAppTheme.fontName,
                                           fontWeight: FontWeight.w600,
                                           fontSize: 12,
                                           color: MonitoringAppTheme.grey
@@ -493,8 +537,8 @@ class DashboardView extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    Text(
-                                      'Info',
+                                    const Text(
+                                      'rpm-avg',
                                       style: TextStyle(
                                         fontFamily: MonitoringAppTheme.fontName,
                                         fontWeight: FontWeight.w500,
@@ -510,26 +554,28 @@ class DashboardView extends StatelessWidget {
                                         height: 4,
                                         width: 70,
                                         decoration: BoxDecoration(
-                                          color: HexColor('#F1B440')
+                                          color: HexColor('#AAC8A7')
                                               .withOpacity(0.2),
-                                          borderRadius: BorderRadius.all(
+                                          borderRadius: const BorderRadius.all(
                                               Radius.circular(4.0)),
                                         ),
                                         child: Row(
                                           children: <Widget>[
                                             Container(
-                                              width: ((70 / 2.5) *
-                                                  animationController!.value),
+                                              width: ((rpmavgValue /100/ 1.2) *
+                                                  widget.animationController!
+                                                      .value),
                                               height: 4,
                                               decoration: BoxDecoration(
                                                 gradient:
                                                     LinearGradient(colors: [
-                                                  HexColor('#F1B440')
+                                                  HexColor('#AAC8A7')
                                                       .withOpacity(0.1),
-                                                  HexColor('#F1B440'),
+                                                  HexColor('#F6FFDE'),
                                                 ]),
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(4.0)),
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                        Radius.circular(4.0)),
                                               ),
                                             ),
                                           ],
@@ -539,10 +585,11 @@ class DashboardView extends StatelessWidget {
                                     Padding(
                                       padding: const EdgeInsets.only(top: 6),
                                       child: Text(
-                                        '10',
+                                        RPMAVG,
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          fontFamily: MonitoringAppTheme.fontName,
+                                          fontFamily:
+                                              MonitoringAppTheme.fontName,
                                           fontWeight: FontWeight.w600,
                                           fontSize: 12,
                                           color: MonitoringAppTheme.grey
@@ -584,16 +631,16 @@ class CurvePainter extends CustomPainter {
       colorsList.addAll([Colors.white, Colors.white]);
     }
 
-    final shdowPaint = new Paint()
+    final shdowPaint = Paint()
       ..color = Colors.black.withOpacity(0.4)
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke
       ..strokeWidth = 14;
-    final shdowPaintCenter = new Offset(size.width / 2, size.height / 2);
+    final shdowPaintCenter = Offset(size.width / 2, size.height / 2);
     final shdowPaintRadius =
         math.min(size.width / 2, size.height / 2) - (14 / 2);
     canvas.drawArc(
-        new Rect.fromCircle(center: shdowPaintCenter, radius: shdowPaintRadius),
+        Rect.fromCircle(center: shdowPaintCenter, radius: shdowPaintRadius),
         degreeToRadians(278),
         degreeToRadians(360 - (365 - angle!)),
         false,
@@ -602,7 +649,7 @@ class CurvePainter extends CustomPainter {
     shdowPaint.color = Colors.grey.withOpacity(0.3);
     shdowPaint.strokeWidth = 16;
     canvas.drawArc(
-        new Rect.fromCircle(center: shdowPaintCenter, radius: shdowPaintRadius),
+        Rect.fromCircle(center: shdowPaintCenter, radius: shdowPaintRadius),
         degreeToRadians(278),
         degreeToRadians(360 - (365 - angle!)),
         false,
@@ -611,7 +658,7 @@ class CurvePainter extends CustomPainter {
     shdowPaint.color = Colors.grey.withOpacity(0.2);
     shdowPaint.strokeWidth = 20;
     canvas.drawArc(
-        new Rect.fromCircle(center: shdowPaintCenter, radius: shdowPaintRadius),
+        Rect.fromCircle(center: shdowPaintCenter, radius: shdowPaintRadius),
         degreeToRadians(278),
         degreeToRadians(360 - (365 - angle!)),
         false,
@@ -620,43 +667,43 @@ class CurvePainter extends CustomPainter {
     shdowPaint.color = Colors.grey.withOpacity(0.1);
     shdowPaint.strokeWidth = 22;
     canvas.drawArc(
-        new Rect.fromCircle(center: shdowPaintCenter, radius: shdowPaintRadius),
+        Rect.fromCircle(center: shdowPaintCenter, radius: shdowPaintRadius),
         degreeToRadians(278),
         degreeToRadians(360 - (365 - angle!)),
         false,
         shdowPaint);
 
-    final rect = new Rect.fromLTWH(0.0, 0.0, size.width, size.width);
-    final gradient = new SweepGradient(
+    final rect = Rect.fromLTWH(0.0, 0.0, size.width, size.width);
+    final gradient = SweepGradient(
       startAngle: degreeToRadians(268),
       endAngle: degreeToRadians(270.0 + 360),
       tileMode: TileMode.repeated,
       colors: colorsList,
     );
-    final paint = new Paint()
+    final paint = Paint()
       ..shader = gradient.createShader(rect)
       ..strokeCap = StrokeCap.round // StrokeCap.round is not recommended.
       ..style = PaintingStyle.stroke
       ..strokeWidth = 14;
-    final center = new Offset(size.width / 2, size.height / 2);
+    final center = Offset(size.width / 2, size.height / 2);
     final radius = math.min(size.width / 2, size.height / 2) - (14 / 2);
 
     canvas.drawArc(
-        new Rect.fromCircle(center: center, radius: radius),
+        Rect.fromCircle(center: center, radius: radius),
         degreeToRadians(278),
         degreeToRadians(360 - (365 - angle!)),
         false,
         paint);
 
-    final gradient1 = new SweepGradient(
+    const gradient1 = SweepGradient(
       tileMode: TileMode.repeated,
       colors: [Colors.white, Colors.white],
     );
 
-    var cPaint = new Paint();
-    cPaint..shader = gradient1.createShader(rect);
-    cPaint..color = Colors.white;
-    cPaint..strokeWidth = 14 / 2;
+    var cPaint = Paint();
+    cPaint.shader = gradient1.createShader(rect);
+    cPaint.color = Colors.white;
+    cPaint.strokeWidth = 14 / 2;
     canvas.save();
 
     final centerToCircle = size.width / 2;
@@ -667,7 +714,7 @@ class CurvePainter extends CustomPainter {
 
     canvas.save();
     canvas.translate(0.0, -centerToCircle + 14 / 2);
-    canvas.drawCircle(new Offset(0, 0), 14 / 5, cPaint);
+    canvas.drawCircle(const Offset(0, 0), 14 / 5, cPaint);
 
     canvas.restore();
     canvas.restore();

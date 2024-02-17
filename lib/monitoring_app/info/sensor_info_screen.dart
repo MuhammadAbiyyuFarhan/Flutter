@@ -1,15 +1,19 @@
-import 'package:best_flutter_ui_templates/monitoring_app/ui_view/area_list_view.dart';
-import 'package:best_flutter_ui_templates/monitoring_app/ui_view/info_view.dart';
-import 'package:best_flutter_ui_templates/monitoring_app/ui_view/title_view.dart';
-import 'package:best_flutter_ui_templates/monitoring_app/ui_view/sensors_details_view.dart';
 import 'package:flutter/material.dart';
-
+import 'package:monitoring_app/monitoring_app/list_view/conveyor.dart';
+import 'package:monitoring_app/monitoring_app/list_view/proximity.dart';
+import 'package:monitoring_app/monitoring_app/list_view/tachometer.dart';
+import 'package:monitoring_app/monitoring_app/list_view/tcs3200.dart';
+import 'package:monitoring_app/monitoring_app/ui_view/sensors_details_view.dart';
+import 'package:monitoring_app/monitoring_app/ui_view/title_view.dart';
+import 'package:monitoring_app/monitoring_app/ui_view/area_list_view.dart';
+import 'package:monitoring_app/monitoring_app/ui_view/info_view.dart';
 import '../monitoring_app_theme.dart';
 
 class TrainingScreen extends StatefulWidget {
-  const TrainingScreen({Key? key, this.animationController}) : super(key: key);
+  const TrainingScreen({super.key, this.animationController});
 
   final AnimationController? animationController;
+
   @override
   _TrainingScreenState createState() => _TrainingScreenState();
 }
@@ -25,9 +29,11 @@ class _TrainingScreenState extends State<TrainingScreen>
   @override
   void initState() {
     topBarAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(
-            parent: widget.animationController!,
-            curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
+      CurvedAnimation(
+        parent: widget.animationController!,
+        curve: const Interval(0, 0.5, curve: Curves.fastOutSlowIn),
+      ),
+    );
     addAllListData();
 
     scrollController.addListener(() {
@@ -62,55 +68,82 @@ class _TrainingScreenState extends State<TrainingScreen>
       TitleView(
         titleTxt: 'Lorem',
         subTxt: 'Ipsum',
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+        animation: Tween<double>(begin: 0.0, end: 1.0).animate(
+          CurvedAnimation(
             parent: widget.animationController!,
-            curve:
-                Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
+            curve: const Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn),
+          ),
+        ),
         animationController: widget.animationController!,
-        
       ),
     );
 
     listViews.add(
       WorkoutView(
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+        animation: Tween<double>(begin: 0.0, end: 1.0).animate(
+          CurvedAnimation(
             parent: widget.animationController!,
-            curve:
-                Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController!,
-      ),
-    );
-    listViews.add(
-      InfoView(
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController!,
-            curve:
-                Interval((1 / count) * 3, 1.0, curve: Curves.fastOutSlowIn))),
+            curve: const Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn),
+          ),
+        ),
         animationController: widget.animationController!,
       ),
     );
 
-    // listViews.add(
-    //   TitleView(
-    //     titleTxt: 'Area of focus',
-    //     subTxt: 'more',
-    //     animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-    //         parent: widget.animationController!,
-    //         curve:
-    //             Interval((1 / count) * 4, 1.0, curve: Curves.fastOutSlowIn))),
-    //     animationController: widget.animationController!,
-         
-    //   ),
-    // );
+    listViews.add(
+      InfoView(
+        animation: Tween<double>(begin: 0.0, end: 1.0).animate(
+          CurvedAnimation(
+            parent: widget.animationController!,
+            curve: const Interval((1 / count) * 3, 1.0, curve: Curves.fastOutSlowIn),
+          ),
+        ),
+        animationController: widget.animationController!,
+      ),
+    );
 
     listViews.add(
       AreaListView(
         mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
-            CurvedAnimation(
-                parent: widget.animationController!,
-                curve: Interval((1 / count) * 5, 1.0,
-                    curve: Curves.fastOutSlowIn))),
+          CurvedAnimation(
+            parent: widget.animationController!,
+            curve: const Interval((1 / count) * 4, 1.0, curve: Curves.fastOutSlowIn),
+          ),
+        ),
         mainScreenAnimationController: widget.animationController!,
+        onTap: () {},
+        onProximityTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const ProximityDetailScreen(),
+            ),
+          );
+        },
+        onConveyorTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const ConveyorDetailScreen(),
+            ),
+          );
+        },
+        onTCS3200Tap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const TCS3200DetailScreen(),
+            ),
+          );
+        },
+        onTachometerTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const TachometerDetailScreen(),
+            ),
+          );
+        },
       ),
     );
   }
@@ -176,7 +209,10 @@ class _TrainingScreenState extends State<TrainingScreen>
               opacity: topBarAnimation!,
               child: Transform(
                 transform: Matrix4.translationValues(
-                    0.0, 30 * (1.0 - topBarAnimation!.value), 0.0),
+                  0.0,
+                  30 * (1.0 - topBarAnimation!.value),
+                  0.0,
+                ),
                 child: Container(
                   decoration: BoxDecoration(
                     color: MonitoringAppTheme.white.withOpacity(topBarOpacity),
@@ -185,10 +221,11 @@ class _TrainingScreenState extends State<TrainingScreen>
                     ),
                     boxShadow: <BoxShadow>[
                       BoxShadow(
-                          color: MonitoringAppTheme.grey
-                              .withOpacity(0.4 * topBarOpacity),
-                          offset: const Offset(1.1, 1.1),
-                          blurRadius: 10.0),
+                        color: MonitoringAppTheme.grey
+                            .withOpacity(0.4 * topBarOpacity),
+                        offset: const Offset(1.1, 1.1),
+                        blurRadius: 10.0,
+                      ),
                     ],
                   ),
                   child: Column(
@@ -198,10 +235,11 @@ class _TrainingScreenState extends State<TrainingScreen>
                       ),
                       Padding(
                         padding: EdgeInsets.only(
-                            left: 16,
-                            right: 16,
-                            top: 16 - 8.0 * topBarOpacity,
-                            bottom: 12 - 8.0 * topBarOpacity),
+                          left: 16,
+                          right: 16,
+                          top: 16 - 8.0 * topBarOpacity,
+                          bottom: 12 - 8.0 * topBarOpacity,
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
@@ -227,9 +265,10 @@ class _TrainingScreenState extends State<TrainingScreen>
                               child: InkWell(
                                 highlightColor: Colors.transparent,
                                 borderRadius: const BorderRadius.all(
-                                    Radius.circular(32.0)),
+                                  Radius.circular(32.0),
+                                ),
                                 onTap: () {},
-                                child: Center(
+                                child: const Center(
                                   child: Icon(
                                     Icons.keyboard_arrow_left,
                                     color: MonitoringAppTheme.grey,
@@ -237,15 +276,15 @@ class _TrainingScreenState extends State<TrainingScreen>
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(
+                            const Padding(
+                              padding: EdgeInsets.only(
                                 left: 8,
                                 right: 8,
                               ),
                               child: Row(
                                 children: <Widget>[
                                   Padding(
-                                    padding: const EdgeInsets.only(right: 8),
+                                    padding: EdgeInsets.only(right: 8),
                                     child: Icon(
                                       Icons.calendar_today,
                                       color: MonitoringAppTheme.grey,
@@ -272,9 +311,10 @@ class _TrainingScreenState extends State<TrainingScreen>
                               child: InkWell(
                                 highlightColor: Colors.transparent,
                                 borderRadius: const BorderRadius.all(
-                                    Radius.circular(32.0)),
+                                  Radius.circular(32.0),
+                                ),
                                 onTap: () {},
-                                child: Center(
+                                child: const Center(
                                   child: Icon(
                                     Icons.keyboard_arrow_right,
                                     color: MonitoringAppTheme.grey,
@@ -284,7 +324,7 @@ class _TrainingScreenState extends State<TrainingScreen>
                             ),
                           ],
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
